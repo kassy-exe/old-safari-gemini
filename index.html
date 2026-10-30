@@ -50,7 +50,7 @@ var clr = document.getElementById("clr");
 var modelSel = document.getElementById("model");
 var hist = [];
 var busy = false;
-var apiKey = "ここにGeminiのAPIキーを貼る";
+var apiKey = "AQ.Ab8RN6KxYYS8czWCmGrv86jNMJlyG-U4nxxBi62CO8ku7gEarQ";
 
 function scroll(){ log.scrollTop = log.scrollHeight; }
 function add(cls, text){
@@ -88,15 +88,16 @@ function render(el, text){
 function send(){
   var t = inp.value.replace(/^\s+|\s+$/g, "");
   if (!t || busy) { return; }
-  if (apiKey.indexOf("AIza") !== 0) { note("HTML内のapiKeyにキーを貼ってから使って"); return; }
+  if (apiKey.length < 20 || apiKey.indexOf("ここに") === 0) { note("HTML内のapiKeyにキーを貼ってから使って"); return; }
   busy = true; btn.disabled = true;
   inp.value = "";
   add("u", t);
   hist.push({ role: "user", content: t });
   var bubble = add("a", "…");
   var x = new XMLHttpRequest();
-  x.open("POST", "https://generativelanguage.googleapis.com/v1beta/models/" + modelSel.value + ":generateContent?key=" + encodeURIComponent(apiKey), true);
+  x.open("POST", "https://generativelanguage.googleapis.com/v1beta/models/" + modelSel.value + ":generateContent", true);
   x.setRequestHeader("Content-Type", "application/json");
+  x.setRequestHeader("x-goog-api-key", apiKey);
   x.timeout = 120000;
   function done(){ busy = false; btn.disabled = false; scroll(); }
   function fail(msg){ bubble.textContent = msg; hist.pop(); done(); }
